@@ -20,4 +20,5 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: "."
         target: "/home/wfheqn4g4he0/public_html/"
-        rm_remote: falses
+        overwrite: true
+        strip_components: 0
