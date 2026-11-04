@@ -11,13 +11,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Copy files via scp
-      uses: appleboy/scp-action@v0.1.7
+    - name: Deploy por FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "*,! .git"
-        target: "/home/wfheqn4g4he0/public_html/"
-        overwrite: true
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USER }}
+        password: ${{ secrets.FTP_PASS }}
+        protocol: ftps
+        server-dir: ./
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/.github/**
+          **/node_modules/**
+          README.md
