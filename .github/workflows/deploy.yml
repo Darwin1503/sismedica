@@ -12,11 +12,11 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Transfer files via SCP
-      uses: appleboy/scp-action@master
+      uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: "."
-        target: "/home/wfheqn4g4he0/public_html"
+        target: "/home/wfheqn4g4he0/public_html/intranet"
