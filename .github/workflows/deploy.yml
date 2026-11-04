@@ -11,14 +11,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Transfer files via SCP
+    - name: Copy files via scp
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "."
+        source: "*,! .git"
         target: "/home/wfheqn4g4he0/public_html/"
         overwrite: true
-        strip_components: 0
