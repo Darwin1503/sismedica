@@ -19,4 +19,4 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         source: "."
-        target: "/home/wfheqn4g4he0/public_html/intranet"
+        target: "/home/wfheqn4g4he0/public_html"
