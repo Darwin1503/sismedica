@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sismedica — Servicios Médicos y Gestión de Emergencias</title>
+  
+  <!-- Tipografía Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
+
+<script src="script.js" defer></script>
+  <!-- CSS de Leaflet para el Mapa Real -->
+
+  <style>
+    /* ==========================================
+       VARIABLES Y ESTILOS BASE CON RELIEVE 3D
+       ========================================== */
+  </style>
+</head>
+<body class="home-active">
+
+  <!-- ELEMENTO DINÁMICO DE MINI AMBULANCIA -->
+  <div id="miniAmbulance" class="fixed-mini-ambulance">
+    <svg class="mini-ambulance-svg" viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="10" width="44" height="20" rx="4" fill="#ffffff" stroke="#274698" stroke-width="2.5"/>
+      <path d="M48 16L58 20V30H48V16Z" fill="#e2ebf9" stroke="#274698" stroke-width="2.5"/>
+      <rect x="4" y="20" width="44" height="4" fill="#e02029"/>
+      <path d="M48 20H56V24H48V20Z" fill="#e02029"/>
+      <path d="M22 14H26V22H22V14Z" fill="#274698"/>
+      <path d="M18 17H30V19H18V17Z" fill="#274698"/>
+      <polygon points="22,6 26,6 28,10 20,10" fill="#e02029" class="siren-flash"/>
+      <circle cx="14" cy="30" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
+      <circle cx="42" cy="30" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <!-- HEADER Y NAVEGACIÓN PRINCIPAL -->
+  <header>
+    <div class="container header-content">
+      <a href="#" class="logo" data-nav="inicio">
+        <img src="Gemini_Generated_Image_dvqnp0dvqnp0dvqn (1).jpg" alt="Logo Sismedica IPS" fetchpriority="high" decoding="async">
+      </a>
+
+      <nav id="mainNav">
+        <ul>
+          <li><a href="#" data-nav="inicio" class="active">Inicio</a></li>
+          
+          <li class="dropdown">
+            <a href="#" class="dropdown-trigger">Servicios Para <span class="dropdown-arrow">▾</span></a>
+            <div class="dropdown-menu">
+              <a href="#" data-nav="concesiones">Concesiones</a>
+              <a href="#" data-nav="personas">Traslados Asistenciales - Personas y Familias</a>
+              <a href="#" data-nav="entidades">Entidades Públicas y Privadas</a>
+            </div>
+          </li>
+
+          <li><a href="#" data-nav="nosotros">Nosotros</a></li>
+          <li><a href="#" data-nav="educa">Sismedica Educa</a></li>
+          <li><a href="#" data-nav="contacto">Contacto</a></li>
+          <li>
+            <a href="#" data-nav="adquiere" class="nav-red" title="Adquiere tu servicio" style="display: inline-flex; align-items: center; justify-content: center; padding: 8px 12px;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <!-- BOTÓN EXCLUSIVO Y DIFERENCIAL PARA "SOY SISMEDICA" AL LADO DEL TELÉFONO -->
+        <a href="#" data-nav="soy-sismedica" class="btn btn-soy">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Soy Sismedica
+        </a>
+
+        <a href="tel:3009127271" class="btn btn-red">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.36 1.78.7 2.6a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.48-1.27a2 2 0 0 1 2.11-.45c.82.34 1.7.58 2.6.7A2 2 0 0 1 22 16.92z"/></svg>
+          300 912 7271
+        </a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir Menú">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PÁGINA 1: INICIO CON VIDEO HERO CINEMATOGRÁFICO Y CONTROL DE AUDIO -->
+  <div class="page active" id="inicio">
+    
+    <section class="hero-video-container">
+      <video class="hero-video-bg" autoplay loop muted playsinline poster="Hero.jpg">
+        <source src="v5_ADAPTACION_SISMEDICA.mp4" type="video/mp4">
+        Tu navegador no soporta reproducción de video.
+      </video>
+
+      <div class="hero-video-overlay"></div>
+
+      <button id="soundToggleBtn" class="sound-toggle-btn" aria-label="Activar sonido">
+        <span id="soundIcon">🔇</span>
+        <span id="soundText">Activar sonido</span>
+      </button>
+
+      <div class="container hero-video-content">
+        <div class="badge">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+          Atención Inmediata 24/7
+        </div>
+        <h1>Especialistas en Preservar la Vida: <span>Servicios de Asistencia a Nivel Nacional 24/7</span></h1>
+        <p class="slogan">
+          Más de 30 años de experiencia protegiendo a tu personal, tus eventos y tus proyectos con ambulancias medicalizadas, brigadas especializadas y control operativo continuo.
+        </p>
+
+        <div class="hero-ctas">
+          <a href="#cotizador-home" class="btn btn-red" onclick="scrollToForm()">Cotiza tu servicio</a>
+          <a href="#" id="btnGoCobertura" class="btn btn-outline" style="color: white; border-color: white;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Conoce nuestra cobertura nacional
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Barra de Logros con 5 Métricas -->
+    <section class="metrics-bar">
+      <div class="container metrics-grid">
+        <div class="metric-item"><h2>14</h2><p>Zonas Cubiertas<br>a Nivel Nacional</p></div>
+        <div class="metric-item"><h2>19</h2><p>Departamentos con<br>Presencia en el País</p></div>
+        <div class="metric-item"><h2>+30</h2><p>Años Líderes en el<br>Mercado de Salud</p></div>
+        <div class="metric-item"><h2>734</h2><p>Personas Trabajando<br>por tu Bienestar</p></div>
+        <div class="metric-item"><h2>24/7</h2><p>Control Operativo<br>y Monitoreo Activo</p></div>
+      </div>
+    </section>
+
+    <!-- Resumen de Servicios -->
+    <section class="section container">
+      <div class="section-title">
+        <h2>¿Cómo Podemos Protegerte Hoy?</h2>
+        <p>Soluciones diseñadas a la medida según las necesidades de cada sector.</p>
+      </div>
+
+      <div class="grid-3">
+        <!-- 1. Concesiones -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+          <img src="Sismedica (1).jpg" alt="Concesiones" style="width: 100%; height: 200px; object-fit: cover; object-position: center; display: block;" loading="lazy" decoding="async">
+          <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
+            <div class="card-icon" style="margin-bottom: 12px; width: 44px; height: 44px;">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <h3 style="font-size: 18px; margin-bottom: 8px;">Concesiones</h3>
+            <p style="font-size: 13.5px; margin-bottom: 16px;">Atención médica vial, ambulancias TAB/TAM, brigadas contra incendios, unidades de rescate, auxilio mecánico con carro taller, grúas y CCO 24/7.</p>
+            <a href="#" class="btn btn-outline" data-nav="concesiones" style="margin-top: auto; padding: 8px 14px; font-size: 13px;">Ver Concesiones →</a>
+          </div>
+        </div>
+
+        <!-- 2. Traslados Asistenciales - Personas y Familias -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+          <img src="Salud personal y familiar.jpg" alt="Traslados Asistenciales - Personas y Familias" style="width: 100%; height: 200px; object-fit: cover; object-position: center; display: block;" loading="lazy" decoding="async">
+          <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
+            <div class="card-icon" style="margin-bottom: 12px; width: 44px; height: 44px;">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            </div>
+            <h3 style="font-size: 18px; margin-bottom: 8px;">Traslados Asistenciales - Personas y Familias</h3>
+            <p style="font-size: 13.5px; margin-bottom: 16px;">Traslados asistenciales médicos especializados (TAB y TAM) directa para ti y tus seres queridos.</p>
+            <a href="#" class="btn btn-outline" data-nav="personas" style="margin-top: auto; padding: 8px 14px; font-size: 13px;">Ver Particular →</a>
+          </div>
+        </div>
+
+        <!-- 3. Entidades Públicas y Privadas -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+          <img src="Entidades públicas y privadas.jpg" alt="Entidades Públicas y Privadas" style="width: 100%; height: 200px; object-fit: cover; object-position: center; display: block;" loading="lazy" decoding="async">
+          <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
+            <div class="card-icon" style="margin-bottom: 12px; width: 44px; height: 44px;">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+            </div>
+            <h3 style="font-size: 18px; margin-bottom: 8px;">Entidades Públicas y Privadas</h3>
+            <p style="font-size: 13.5px; margin-bottom: 16px;">Cobertura médica integral para EPS, IPS, ARL, parques industriales, empresas e instituciones educativas: transporte TAB/TAM, medicina domiciliaria y área segura.</p>
+            <a href="#" class="btn btn-outline" data-nav="entidades" style="margin-top: auto; padding: 8px 14px; font-size: 13px;">Ver Servicios Corporativos →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CERTIFICACIONES ISO UNICAMENTE -->
+      <div class="clients-section" style="margin-top: 20px;">
+        <div class="certifications-subblock" style="border-top: none; padding-top: 0; margin-top: 0;">
+          <h3 class="clients-title">Nuestras Certificaciones Internacionales ISO</h3>
+          <div class="clients-grid">
+            <div class="iso-svg-card scroll-reveal"><img src="ISO 90001 2015.png" alt="Certificado ISO 9001:2015" loading="lazy" decoding="async"></div>
+            <div class="iso-svg-card scroll-reveal"><img src="ISO 14001 2015.png" alt="Certificado ISO 14001:2015" loading="lazy" decoding="async"></div>
+            <div class="iso-svg-card scroll-reveal"><img src="ISO 45001 2018.png" alt="Certificado ISO 45001:2018" loading="lazy" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TESTIMONIOS -->
+      <div class="testimonials-section">
+        <div class="section-title" style="margin-bottom: 32px;">
+          <h2>Lo Que Dicen Nuestros Clientes</h2>
+          <p>La confianza de nuestros aliados y usuarios respalda nuestro compromiso diario con la preservación de la vida.</p>
+        </div>
+
+        <div class="testimonial-carousel-container">
+          <button class="carousel-nav-btn prev" id="prevTestimonial" aria-label="Testimonio Anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+          
+          <div class="testimonial-track-wrapper">
+            <div class="testimonial-track" id="testimonialTrack">
+              <div class="testimonial-slide">
+                <div class="testimonial-card-box">
+                  <div class="testimonial-stars">★★★★★</div>
+                  <h3 class="testimonial-card-title">"Respuesta impecable en corredor vial"</h3>
+                  <p class="testimonial-quote-text">"En los proyectos de infraestructura vial los tiempos de respuesta ante un incidente son críticos. El equipo de Sismedica no solo cumple con tiempos récord, sino que su personal operativo y ambulancias están impecablemente equipados."</p>
+                  <div class="testimonial-author-info">— Sector Concesiones Viales</div>
+                </div>
+              </div>
+              <div class="testimonial-slide">
+                <div class="testimonial-card-box">
+                  <div class="testimonial-stars">★★★★★</div>
+                  <h3 class="testimonial-card-title">"Gestión de salud ocupacional de primer nivel"</h3>
+                  <p class="testimonial-quote-text">"Instalamos el puesto de enfermería in-company con Sismedica en nuestra planta industrial. El control operativo y el acompañamiento del CCO 24/7 nos han dado una tranquilidad enorme."</p>
+                  <div class="testimonial-author-info">— Gerente de Seguridad y Salud en el Trabajo</div>
+                </div>
+              </div>
+              <div class="testimonial-slide">
+                <div class="testimonial-card-box">
+                  <div class="testimonial-stars">★★★★★</div>
+                  <h3 class="testimonial-card-title">"Calidez y rapidez cuando más lo necesitábamos"</h3>
+                  <p class="testimonial-quote-text">"Requeríamos un traslado medicalizado (TAM) de emergencia. La atención del personal médico fue súper humana, profesional y muy cuidadosa durante todo el trayecto."</p>
+                  <div class="testimonial-author-info">— Usuaria Particular</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="carousel-nav-btn next" id="nextTestimonial" aria-label="Siguiente Testimonio"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
+
+          <div class="carousel-dots" id="carouselDots">
+            <span class="carousel-dot active" data-index="0"></span>
+            <span class="carousel-dot" data-index="1"></span>
+            <span class="carousel-dot" data-index="2"></span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- FORMULARIO COTIZADOR REESTRUCTURADO -->
+    <section class="section container" id="cotizador-home" style="padding-top: 10px; padding-bottom: 50px;">
+      <div class="form-card">
+        <div style="margin-bottom: 24px;">
+          <h3>Cotiza tu Servicio Médico</h3>
+          <p>Tu cotización personalizada a un clic</p>
+        </div>
+
+        <form id="heroQuoteForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>NOMBRE O EMPRESA</label>
+              <input type="text" class="form-control" placeholder="" required>
+            </div>
+            <div class="form-group">
+              <label>TELÉFONO (WHATSAPP)</label>
+              <input type="tel" class="form-control" placeholder="" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>¿QUÉ SERVICIO NECESITAS?</label>
+              <select class="form-control" required>
+                <option value="">Selecciona una opción...</option>
+                <option>Transporte Asistencial Especializado: TAM y TAB</option>
+                <option>Brigada Contraincendios</option>
+                <option>Unidad de Rescate</option>
+                <option>Auxilio Mecánico: Carro Taller</option>
+                <option>Grúa Liviana y Pesada</option>
+                <option>Servicio de Atención al Usuario (SAU) y Central CCO 24/7</option>
+                <option>Área Segura</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>¿CUÁNDO LO NECESITAS?</label>
+              <select class="form-control" required>
+                <option value="">Selecciona la urgencia...</option>
+                <option>Urgente (En menos de 24 horas)</option>
+                <option>Esta semana</option>
+                <option>Próximo mes</option>
+                <option>Proyecto / Licitación futura</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>DEPARTAMENTO DEL SERVICIO</label>
+              <select class="form-control" required>
+                <option value="">Selecciona...</option>
+                <option>Antioquia</option>
+                <option>Bolívar</option>
+                <option>Cundinamarca</option>
+                <option>Armenia</option>
+                <option>Montería</option>
+                <option>Valle del Cauca</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>SECTOR</label>
+              <select class="form-control" required>
+                <option value="">Selecciona...</option>
+                <option>Servicios para Concesiones Viales</option>
+                <option>Traslados Asistenciales - Personas y Familias</option>
+                <option>Servicios para Entidades Públicas y Privadas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-checkbox-group">
+            <input type="checkbox" id="checkHeroData" required>
+            <label for="checkHeroData">Acepto la <a href="#" id="btnOpenPrivacyModalFromForm">Política de Tratamiento de Datos Personales</a> y autorizo el uso de mi información para la gestión de esta cotización.</label>
+          </div>
+
+          <div style="margin-top: 16px;">
+            <button type="submit" class="btn btn-blue" style="width: 100%; height: 48px;">Solicitar Cotización Ahora</button>
+          </div>
+
+          <div class="alert-success" id="alertHeroForm">✓ Solicitud enviada a coordinacion.contratacion@sismedica.co. Un asesor te contactará en breve.</div>
+        </form>
+      </div>
+    </section>
+
+    <!-- FOOTER GRANDE (SOLO VISIBLE EN INICIO) -->
+    <div class="container" style="padding-bottom: 40px;" id="big-footer">
+      <div class="contact-block">
+        <div class="contact-grid">
+          <div class="contact-col">
+            <h4>Contáctanos Directamente</h4>
+            <ul class="contact-info-list">
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.36 1.78.7 2.6a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.48-1.27a2 2 0 0 1 2.11-.45c.82.34 1.7.58 2.6.7A2 2 0 0 1 22 16.92z"/></svg>
+                <div><strong>Teléfono 24/7:</strong><br><a href="tel:3009127271" style="color:var(--white); text-decoration:none;">300 912 7271</a></div>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <div><strong>Correo Corporativo:</strong><br><a href="mailto:sismedica@sismedica.co" style="color:var(--white); text-decoration:none;">sismedica@sismedica.co</a></div>
+              </li>
+              <li>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <div><strong>Dirección Sede Principal:</strong><br>Cl. 130A 58A-20, Bogotá, D.C.</div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="contact-col">
+            <h4>Trabaja con Nosotros</h4>
+            <div class="rrhh-box">
+              <p><strong>Tu talento también puede mover vidas.</strong>
+                  En SISMEDICA creemos que detrás de cada servicio hay personas comprometidas con cuidar, responder y hacer la diferencia.</p>
+              <button id="btnOpenCvModal" class="btn btn-outline" style="color:white; border-color:white; width:100%;">Enviar Hoja de Vida</button>
+            </div>
+          </div>
+
+          <div class="contact-col">
+            <h4>Preguntas Frecuentes</h4>
+            <p style="font-size: 13px; color: #94a3b8; margin-bottom: 16px;">Resuelve tus dudas sobre cobertura, tipos de ambulancia y contratación.</p>
+            <a href="#" class="btn btn-blue" data-nav="faqs" style="width: 100%;">Ver Centro de FAQs</a>
+
+            <div class="social-box">
+              <h5>Síguenos en Redes Sociales</h5>
+              <div class="social-links">
+                <a href="https://www.facebook.com/sismedica/" target="_blank" aria-label="Facebook" class="social-btn">
+                  <svg viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.66 8.83 8.44 9.6v-6.79H7.9v-2.81h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.81h-2.34V21.6C18.34 20.83 22 16.84 22 12z"/></svg>
+                </a>
+                <a href="https://www.instagram.com/sismedica/" target="_blank" aria-label="Instagram" class="social-btn">
+                  <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                </a>
+                <a href="https://www.linkedin.com/company/sismedica-sas/" target="_blank" aria-label="LinkedIn" class="social-btn">
+                  <svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pie inferior dentro del Big Footer -->
+        <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #94a3b8; flex-wrap: wrap; gap: 12px;">
+          <span>© Sismedica. Todos los derechos reservados.</span>
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <button id="btnOpenPrivacyModal" style="color: #94a3b8; background: transparent; border: none; text-decoration: underline; font-size: 12px; cursor: pointer;">Políticas de privacidad</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÁGINA PERFILADA: CONCESIONES -->
+  <div class="page" id="concesiones">
+    <div class="page-header">
+      <div class="container">
+        <h1>Servicios Médicos y Operativos para Concesiones Viales</h1>
+        <p>Acompañamiento integral en vía, respuesta a emergencias y control operativo 24/7 para corredores viales concesionados.</p>
+      </div>
+    </div>
+
+    <div class="container section">
+      <div class="service-feature-container">
+        <!-- Fila 1 -->
+        <div class="service-feature-row">
+          <div class="feature-text">
+            <h3>Transporte Asistencial Especializado: TAM y TAB</h3>
+            <p>Unidades Básicas (TAB) y Medicalizadas (TAM) desplegadas en puntos estratégicos del corredor para atención inmediata de heridos en vía.</p>
+            <a href="#" class="btn btn-blue" data-nav="contacto">Quiero más información</a>
+          </div>
+          <div class="feature-image-card">
+            <img src="Sismedica (1).jpg" alt="Transporte Asistencial Especializado" loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <!-- Fila 2 -->
+        <div class="service-feature-row">
+          <div class="feature-text">
+            <h3>Brigadas Contraincendios</h3>
+            <p>Equipos y personal altamente calificado para control inicial de conflagraciones, conatos de incendio y mitigación de derrames en carretera.</p>
+            <a href="#" class="btn btn-blue" data-nav="contacto">Quiero más información</a>
+          </div>
+          <div class="feature-image-card">
+            <img src="incendios.jpg" alt="Brigadas Contraincendios" loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <!-- Fila 3 -->
+        <div class="service-feature-row">
+          <div class="feature-text">
+            <h3>Unidad de Rescate</h3>
+            <p>Vehículos dotados con herramientas hidráulicas de extricación para rescate vehicular complejo en accidentes severos de tránsito.</p>
+            <a href="#" class="btn btn-blue" data-nav="contacto">Quiero más información</a>
+          </div>
+          <div class="feature-image-card">
+            <img src="Unidad de Rescate.jpg" alt="Unidad de Rescate" loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <!-- Fila 4 -->
+        <div class="service-feature-row">
+          <div class="feature-text">
+            <h3>Auxilio Mecánico: Carro Taller</h3>
+            <p>Asistencia técnica en vía para fallas mecánicas menores, cambio de llantas, reinicio de baterías y apoyo rápido a usuarios varados.</p>
+            <a href="#" class="btn btn-blue" data-nav="contacto">Quiero más información</a>
+          </div>
+          <div class="feature-image-card">
+            <img src="Auxilio Mecánico Carro Taller.jpg" alt="Auxilio Mecánico" loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <!-- Fila 5 -->
+        <div class="service-feature-row">
+          <div class="feature-text">
+            <h3>Grúa Liviana y Pesada</h3>
+            <p>Remolque operativo inmediato para despeje de la calzada en vehículos livianos, buses y transporte de carga pesada.</p>
+            <a href="#" class="btn btn-blue" data-nav="contacto">Quiero más información</a>
+          </div>
+          <div class="feature-image-card">
+            <img src="Grúa Liviana y Pesada.jpg" alt="Grúas" loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <!-- Fila 6 -->
+        <div class="service-feature-row">
+          <div class="feature-text">
+            <h3>Servicio de Atención al Usuario (SAU) y Central CCO 24/7</h3>
+            <p>Monitoreo georreferenciado en tiempo real, gestión de llamadas S.O.S. y atención al usuario del corredor vial las 24 horas del día.</p>
+            <a href="#" class="btn btn-blue" data-nav="contacto">Quiero más información</a>
+          </div>
+          <div class="feature-image-card">
+            <img src="Servicio de Atención al Usuario (SAU) y Central CCO 247.jpg" alt="SAU" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÁGINA PERFILADA: TRASLADOS ASISTENCIALES - PERSONAS Y FAMILIAS -->
+  <div class="page" id="personas">
+    <div class="page-header">
+      <div class="container">
+        <h1>Traslados Asistenciales - Personas y Familias</h1>
+        <p>Traslados oportunos, profesionales y con calidez humana para ti y tus seres queridos.</p>
+      </div>
+    </div>
+
+    <div class="container section">
+      <div class="service-feature-container">
+        <!-- Fila 1 -->
+        <div class="service-feature-row">
+          <div class="feature-text">
+            <h3>Transporte Asistencial Especializado: TAM y TAB</h3>
+            <p>Traslados médicos intermunicipales o urbanos, citas médicas, procedimientos programados o emergencias vitales con unidades Básicas (TAB) y Medicalizadas (TAM).</p>
+            <a href="#" class="btn btn-blue" data-nav="contacto">Quiero más información</a>
+          </div>
+          <div class="feature-image-card">
+            <img src="Gemini_Generated_Image_rcuaiqrcuaiqrcua.jpg" alt="Transporte Asistencial" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 60px; padding-top: 40px; border-top: 2px dashed var(--border-color);">
+        <div class="section-title" style="margin-bottom: 36px;">
+          <h2>¿Qué ambulancia debo elegir?</h2>
+        </div>
+        <div class="grid-2">
+          <div class="card" style="border-top: 6px solid var(--primary-blue);">
+            <h3 style="font-size: 20px; color: var(--primary-blue); margin-bottom: 16px;">1. TAB — Transporte Asistencial Básico</h3>
+            <ul class="ambulance-info-list" style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: var(--text-muted);">
+              <li><strong>Objetivo:</strong> Pacientes estables que no presentan riesgo vital inmediato y no requieren monitoreo médico intensivo.</li>
+              <li><strong>Personal a bordo:</strong> Conductor + Auxiliar de Enfermería o Tecnólogo en Atención Prehospitalaria.</li>
+              <li><strong>Equipamiento:</strong> Soporte Vital Básico (Oxígeno, botiquín de trauma, inmovilizadores, camilla, DEA - Desfibrilador Automático).</li>
+              <li><strong>Usos frecuentes:</strong> Traslados a citas médicas, altas hospitalarias, exámenes diagnósticos.</li>
+            </ul>
+          </div>
+          <div class="card" style="border-top: 6px solid var(--accent-red);">
+            <h3 style="font-size: 20px; color: var(--accent-red); margin-bottom: 16px;">2. TAM — Transporte Asistencial Medicalizado</h3>
+            <ul class="ambulance-info-list" style="display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: var(--text-muted);">
+              <li><strong>Objetivo:</strong> Pacientes críticos o de alto riesgo que requieren soporte vital avanzado y monitoreo médico continuo.</li>
+              <li><strong>Personal a bordo:</strong> Conductor + Médico + Auxiliar de Enfermería o Tecnólogo en Atención Prehospitalaria.</li>
+              <li><strong>Equipamiento:</strong> Soporte Vital Avanzado / UCI Móvil (Ventilador mecánico, monitor de signos vitales, desfibrilador manual).</li>
+              <li><strong>Usos frecuentes:</strong> Infartos, politraumatismos graves, traslados entre Unidades de Cuidados Intensivos (UCI).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÁGINA PERFILADA: ENTIDADES PÚBLICAS Y PRIVADAS -->
+  <div class="page" id="entidades">
+    <div class="page-header">
+      <div class="container">
+        <h1>Servicios para Entidades Públicas y Privadas</h1>
+        <p>Cobertura integral para EPS, IPS, ARL, aseguradoras, parques industriales, instituciones educativas y empresas privadas a nivel nacional.</p>
+      </div>
+    </div>
+
+    <div class="container section">
+      <div class="service-feature-container">
+        <!-- Fila 1 -->
+        <div class="service-feature-row">
+          <div class="feature-text">
+            <h3>Transporte Asistencial Especializado: TAM y TAB</h3>
+            <p>Traslados interinstitucionales de pacientes, remisiones entre clínicas/hospitales y cobertura asistencial para afiliados de aseguradoras, EPS y ARL.</p>
+            <a href="#" class="btn btn-blue" data-nav="contacto">Quiero más información</a>
+          </div>
+          <div class="feature-image-card">
+            <img src="Transporte Asistencial Especializado (2).jpg" alt="Transporte Asistencial Especializado" loading="lazy" decoding="async">
+          </div>
+        </div>
+
+        <!-- Fila 2 -->
+        <div class="service-feature-row">
+          <div class="feature-text">
+            <h3>Área Segura</h3>
+            <p>Protección médica integral permanente para parques industriales, instituciones educativas, plantas de producción, eventos masivos y sedes administrativas.</p>
+            <a href="#" class="btn btn-blue" data-nav="contacto">Quiero más información</a>
+          </div>
+          <div class="feature-image-card">
+            <img src="Área segura (2).jpg" alt="Área Segura" loading="lazy" decoding="async">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÁGINA 4: NOSOTROS -->
+  <div class="page" id="nosotros">
+    <div class="page-header">
+      <div class="container">
+        <h1>Somos Sismedica</h1>
+        <p>Más de tres décadas dedicadas a salvaguardar la vida humana con excelencia operativa.</p>
+      </div>
+    </div>
+
+    <div class="container section">
+
+      <!-- BLOQUE DE COBERTURA -->
+      <div class="cobertura-section-wrapper" id="seccion-cobertura" style="margin-bottom: 50px;">
+        <div class="card" style="height: 100%;">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <h3 style="font-size: 22px; color: var(--primary-blue);">Cobertura Operativa Nacional</h3>
+          <p style="font-size: 14px; margin-bottom: 16px;">Operamos de forma continua en 14 zonas estratégicas y 19 departamentos. Haz clic o pasa el cursor sobre los departamentos:</p>
+          
+          <div class="dept-tags-grid" id="deptTagsContainer">
+            <span class="dept-badge" data-lat="6.2442" data-lng="-75.5812" data-dept="Antioquia">• Antioquia</span>
+            <span class="dept-badge" data-lat="10.9685" data-lng="-74.7813" data-dept="Atlántico">• Atlántico</span>
+            <span class="dept-badge" data-lat="9.2412" data-lng="-74.3210" data-dept="Bolívar">• Bolívar</span>
+            <span class="dept-badge" data-lat="5.5353" data-lng="-73.3678" data-dept="Boyacá">• Boyacá</span>
+            <span class="dept-badge" data-lat="5.0689" data-lng="-75.5174" data-dept="Caldas">• Caldas</span>
+            <span class="dept-badge" data-lat="10.3997" data-lng="-75.5144" data-dept="Cartagena">• Cartagena – Distrito Turístico</span>
+            <span class="dept-badge" data-lat="5.3378" data-lng="-72.3959" data-dept="Casanare">• Casanare</span>
+            <span class="dept-badge" data-lat="2.4448" data-lng="-76.6147" data-dept="Cauca">• Cauca</span>
+            <span class="dept-badge" data-lat="10.4631" data-lng="-73.2532" data-dept="Cesar">• Cesar</span>
+            <span class="dept-badge" data-lat="8.7480" data-lng="-75.8814" data-dept="Córdoba">• Córdoba</span>
+            <span class="dept-badge" data-lat="4.7110" data-lng="-74.0721" data-dept="Cundinamarca">• Cundinamarca</span>
+            <span class="dept-badge" data-lat="10.8500" data-lng="-74.2000" data-dept="Magdalena">• Magdalena</span>
+            <span class="dept-badge" data-lat="4.1420" data-lng="-73.6266" data-dept="Meta">• Meta</span>
+            <span class="dept-badge" data-lat="1.2136" data-lng="-77.2811" data-dept="Nariño">• Nariño</span>
+            <span class="dept-badge" data-lat="4.5339" data-lng="-75.6811" data-dept="Quindío">• Quindío</span>
+            <span class="dept-badge" data-lat="7.1254" data-lng="-73.1198" data-dept="Santander">• Santander</span>
+            <span class="dept-badge" data-lat="9.3047" data-lng="-75.3978" data-dept="Sucre">• Sucre</span>
+            <span class="dept-badge" data-lat="4.4389" data-lng="-75.2322" data-dept="Tolima">• Tolima</span>
+            <span class="dept-badge" data-lat="3.4516" data-lng="-76.5320" data-dept="Valle del Cauca">• Valle del Cauca</span>
+          </div>
+        </div>
+
+        <div class="map-card-container">
+          <div class="map-header-badge"><span class="live-dot"></span>19 Departamentos Activos</div>
+          <div id="leaf-map-colombia"></div>
+        </div>
+      </div>
+
+      <!-- BLOQUE DE INFORMACIÓN INSTITUCIONAL -->
+      <div class="accordion-container">
+        <div class="accordion-item active">
+          <div class="accordion-header">
+            <div class="accordion-icon-box">&minus;</div>
+            <div class="accordion-title">Tres décadas liderando la respuesta médica en Colombia</div>
+          </div>
+          <div class="accordion-content">
+            <p>SISMEDICA SAS, nace de la coincidencia de intereses operativos en los que sus fundadores identifican la necesidad de brindar un servicio integral de asistencia, estabilización y transporte de pacientes que, con la condición de calidad, evoluciona y presenta servicios multifuncionales de soporte.</p>
+            <p style="margin-top: 12px;">Brindamos servicio a nivel nacional en clínicas, hospitales, proyectos privados y públicos, concesiones viales, constructoras y áreas protegidas; contamos con varios modelos y tipos de ambulancia según la necesidad y el requerimiento de nuestro cliente.</p>
+            <p style="margin-top: 12px;">Nuestras ambulancias son modernas y seguras, operadas por personal idóneo y asistidos por médicos con experiencia en atención prehospitalaria.</p>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-header">
+            <div class="accordion-icon-box">&plus;</div>
+            <div class="accordion-title">La promesa que nos mueve cada día</div>
+          </div>
+          <div class="accordion-content">
+            <p><strong>Nuestro compromiso:</strong><br>
+            Impactar de manera positiva en la preservación y el cuidado de la vida humana, a través de un equipo humano altamente capacitado, combinando tecnología avanzada y la mayor cobertura a nivel nacional para brindar soluciones integrales.</p>
+            <p style="margin-top: 14px; margin-bottom: 8px;"><strong>Pilares fundamentales:</strong></p>
+            <ul style="list-style-type: disc; padding-left: 20px; display: flex; flex-direction: column; gap: 6px;">
+              <li>El cliente es nuestra prioridad</li>
+              <li>La calidad es nuestro sello</li>
+              <li>Nos apasiona ser los mejores en todo lo que hacemos</li>
+              <li>Cumplimos nuestras promesas</li>
+              <li>Actuamos con integridad y transparencia</li>
+              <li>Respetamos a cada persona</li>
+              <li>Construimos un futuro sostenible</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <div class="accordion-header">
+            <div class="accordion-icon-box">&plus;</div>
+            <div class="accordion-title">Nuestro propósito y proyección</div>
+          </div>
+          <div class="accordion-content">
+            <p><strong>Nuestra misión:</strong><br>
+            Impactar de manera positiva en la preservación y el cuidado de la vida humana.</p>
+            <p style="margin-top: 14px;"><strong>Nuestra visión:</strong><br>
+            En el 2029 seremos los líderes en cada uno de los mercados en donde estemos presentes, nuestros servicios serán los preferidos por aportar valor a clientes, usuarios, colaboradores, accionistas y partes interesadas.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CERTIFICACIONES ISO EN NOSOTROS -->
+      <div class="clients-section" style="margin-top: 40px;">
+        <div class="certifications-subblock" style="border-top: 2px dashed var(--border-color); padding-top: 36px; margin-top: 0;">
+          <h3 class="clients-title">Nuestras Certificaciones Internacionales ISO</h3>
+          <div class="clients-grid">
+            <div class="iso-svg-card scroll-reveal"><img src="ISO 90001 2015.png" alt="ISO 9001" loading="lazy" decoding="async"></div>
+            <div class="iso-svg-card scroll-reveal"><img src="ISO 14001 2015.png" alt="ISO 14001" loading="lazy" decoding="async"></div>
+            <div class="iso-svg-card scroll-reveal"><img src="ISO 45001 2018.png" alt="ISO 45001" loading="lazy" decoding="async"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 5: SISMEDICA EDUCA -->
+  <div class="page" id="educa">
+    <div class="page-header">
+      <div class="container">
+        <h1>Sismedica Educa</h1>
+        <p>Todo lo que necesitas saber para prevenir riesgos y actuar a tiempo antes de que llegue la ayuda.</p>
+      </div>
+    </div>
+
+    <div class="container section">
+      <p style="text-align: center; max-width: 900px; margin: 0 auto 36px auto; font-size: 13.5px; line-height: 1.6; color: var(--text-muted);">
+        <strong style="color: var(--accent-red);">Aviso de responsabilidad:</strong> El contenido es informativo y orientativo, no constituye asesoría profesional y debe ser validado por un profesional competente. SISMEDICA S.A.S. no se hace responsable por el uso inadecuado de esta información, sin perjuicio de las responsabilidades legales aplicables.
+      </p>
+
+      <div class="grid-4">
+        <div class="article-card" id="articleCard1" data-article="1">
+          <div class="article-header">
+            <img src="1.jpg" alt="Accidente de tránsito" loading="lazy" decoding="async">
+            <span class="article-tag">Emergencias</span>
+          </div>
+          <div class="article-body">
+            <h4>¿Qué hacer (y qué NO hacer) mientras llega la ambulancia en un accidente de tránsito?</h4>
+            <span class="article-link">Leer artículo completo →</span>
+          </div>
+        </div>
+
+        <div class="article-card" id="articleCard2" data-article="2">
+          <div class="article-header">
+            <img src="2.jpg" alt="Plan de Manejo de Tráfico PMT" loading="lazy" decoding="async">
+            <span class="article-tag">Vial</span>
+          </div>
+          <div class="article-body">
+            <h4>Cómo funciona un Plan de Manejo de Tráfico (PMT) en obras y concesiones</h4>
+            <span class="article-link">Leer artículo completo →</span>
+          </div>
+        </div>
+
+        <div class="article-card" id="articleCard3" data-article="3">
+          <div class="article-header">
+            <img src="3.jpg" alt="Preparación ante sismo" loading="lazy" decoding="async">
+            <span class="article-tag">Prevención</span>
+          </div>
+          <div class="article-body">
+            <h4>¿Cómo deberías prepararte antes, durante y después de un sismo?</h4>
+            <span class="article-link">Leer artículo completo →</span>
+          </div>
+        </div>
+
+        <div class="article-card" id="articleCard4" data-article="4">
+          <div class="article-header">
+            <img src="4.jpg" alt="Señales de tránsito en la carretera" loading="lazy" decoding="async">
+            <span class="article-tag">Seguridad</span>
+          </div>
+          <div class="article-body">
+            <h4>¿Conocías estas señales de tránsito en la carretera y qué indica cada una?</h4>
+            <span class="article-link">Leer artículo completo →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÁGINA 7: SOY SISMEDICA -->
+  <div class="page" id="soy-sismedica">
+    
+    <!-- EN CONSTRUCCIÓN / EN DESARROLLO -->
+    <div id="soyLoginView" class="soy-login-section">
+      <div class="soy-login-box scroll-reveal" style="text-align: center; padding: 48px 36px;">
+        <div style="width: 68px; height: 68px; background: var(--primary-blue-light); color: var(--primary-blue); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(39, 70, 152, 0.15);">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </div>
+        <h3 style="font-size: 26px; color: var(--primary-blue); font-weight: 800; margin-bottom: 8px;">En Construcción</h3>
+        <p style="font-size: 16px; color: var(--text-dark); font-weight: 700; margin-bottom: 12px;">Estamos trabajando en esto</p>
+        <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px;">
+          Esta sección se encuentra actualmente en desarrollo para brindarte una mejor experiencia. Muy pronto podrás acceder a todas las funciones de nuestro portal corporativo.
+        </p>
+        <a href="#" data-nav="inicio" class="btn btn-blue" style="width: 100%; height: 46px; font-size: 14px;">Volver al Inicio</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PÁGINA 6: CONTACTO -->
+  <div class="page" id="contacto">
+    <div class="page-header">
+      <div class="container">
+        <h1>Centro de Contacto y Atención</h1>
+        <p>Estamos listos para atender tus requerimientos corporativos o personales en cualquier momento.</p>
+      </div>
+    </div>
+
+    <div class="container section">
+      <div class="grid-2">
+        <div class="form-card">
+          <h3>Formulario de Contacto Directo</h3>
+          <form id="pageContactForm">
+            <div class="form-group">
+              <label>NOMBRE O EMPRESA</label>
+              <input type="text" class="form-control" required placeholder="Nombre completo o razón social">
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>NÚMERO DE CONTACTO</label>
+                <input type="tel" class="form-control" required placeholder="Teléfono / Celular">
+              </div>
+              <div class="form-group">
+                <label>CORREO ELECTRÓNICO</label>
+                <input type="email" class="form-control" required placeholder="email@dominio.com">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>¿QUÉ SERVICIO NECESITAS?</label>
+                <select class="form-control" required>
+                  <option value="">Selecciona una opción...</option>
+                  <option>Transporte Asistencial Especializado: TAM y TAB</option>
+                  <option>Brigada Contraincendios</option>
+                  <option>Unidad de Rescate</option>
+                  <option>Auxilio Mecánico: Carro Taller</option>
+                  <option>Grúa Liviana y Pesada</option>
+                  <option>Servicio de Atención al Usuario (SAU) y Central CCO 24/7</option>
+                  <option>Área Segura</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>SECTOR</label>
+                <select class="form-control" required>
+                  <option value="">Selecciona...</option>
+                  <option>Servicios para Concesiones Viales</option>
+                  <option>Traslados Asistenciales - Personas y Familias</option>
+                  <option>Servicios para Entidades Públicas y Privadas</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>DEPARTAMENTO DEL SERVICIO</label>
+              <select class="form-control" required>
+                <option value="">Selecciona...</option>
+                <option>Antioquia</option>
+                <option>Bolívar</option>
+                <option>Cundinamarca</option>
+                <option>Armenia</option>
+                <option>Montería</option>
+                <option>Valle del Cauca</option>
+              </select>
+            </div>
+            
+            <div class="form-group" style="margin-top: 16px;">
+              <label>CUÉNTANOS A DETALLE</label>
+              <textarea class="form-control" rows="4" placeholder="Escribe aquí los detalles de tu solicitud o requerimiento..."></textarea>
+            </div>
+
+            <div class="form-checkbox-group">
+              <input type="checkbox" id="checkContactData" required>
+              <label for="checkContactData">Acepto la <a href="#" id="btnOpenPrivacyModalFromContact">Política de Tratamiento de Datos Personales</a> y autorizo el contacto para dar respuesta a mi mensaje.</label>
+            </div>
+
+            <button type="submit" class="btn btn-blue" style="width: 100%; margin-top: 16px;">Enviar Mensaje</button>
+            <div class="alert-success" id="alertContactForm">✓ Mensaje enviado exitosamente. Nos comunicaremos contigo.</div>
+          </form>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <div class="card">
+            <h3>Sede Central</h3>
+            <p><strong>Dirección:</strong> Cl. 130A 58A-20, Bogotá, Distrito Capital</p>
+            <p><strong>Línea PBX:</strong> 300 912 7271</p>
+            <p><strong>Atención Operativa CCO:</strong> 24 horas, 365 días del año</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PÁGINA 8: ADQUIERE TU SERVICIO -->
+  <div class="page" id="adquiere" style="background-color: #f8fafc;">
+    <div class="container section" style="padding-top: 60px; padding-bottom: 80px; display: flex; justify-content: center;">
+      
+      <div class="form-card" style="width: 100%; max-width: 760px; padding: 48px; background: #ffffff; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); border: 1px solid #e2e8f0;">
+        
+        <form id="paymentGatewayForm" action="https://portalpagos.davivienda.com/#/comercio/16664/HILOS%20DE%20MARIPOSA%20EXIUM%20SAS" target="_blank">
+          
+          <h2 style="font-size: 20px; font-weight: 700; color: #274698; margin-bottom: 24px;">1. Datos de Facturación o Servicio</h2>
+          
+          <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 16px;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-size: 11px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block;">NÚMERO DE DOCUMENTO / NIT</label>
+              <input type="text" id="docNitInput" class="form-control" placeholder="" required style="width: 100%; padding: 14px 16px; border: 1px solid #94a3b8; border-radius: 6px; font-size: 15px;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label style="font-size: 11px; font-weight: 700; color: #1e293b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block;">RAZÓN SOCIAL O NOMBRE</label>
+              <input type="text" id="razonSocialInput" class="form-control" placeholder="" required style="width: 100%; padding: 14px 16px; border: 1px solid #94a3b8; border-radius: 6px; font-size: 15px;">
+            </div>
+          </div>
+
+          <!-- BOTÓN ENVIAR INFORMACIÓN UBICADO DEBAJO DE LA RAZÓN SOCIAL -->
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 36px;">
+            <button type="button" id="btnEnviarInfo" class="btn btn-outline" style="padding: 10px 20px; font-size: 14px; font-weight: 700; border-radius: 6px; border-color: #274698; color: #274698;">
+              Enviar información
+            </button>
+          </div>
+
+          <h2 style="font-size: 20px; font-weight: 700; color: #274698; margin-bottom: 24px;">2. Selecciona tu Método de Pago</h2>
+
+          <div style="width: 100%; max-width: 280px; margin-bottom: 40px;">
+            <div class="payment-method-card active" data-method="davivienda" style="border: 2px solid #274698; border-radius: 8px; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #ffffff; cursor: pointer;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#274698" stroke-width="2" style="width: 32px; height: 32px; margin-bottom: 12px;"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11m16-11v11m-8-11v11m-4-11v11m8-11v11"/></svg>
+              <span style="color: #274698; font-weight: 700; font-size: 14px;">Portal Pagos Davivienda</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-blue" style="width: 100%; height: 56px; font-size: 16px; font-weight: 700; border-radius: 6px; background-color: #274698; color: #ffffff; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: background-color 0.2s;">
+            Ir a Pagar en Davivienda <span style="margin-left: 8px;">→</span>
+          </button>
+          
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 9: PREGUNTAS FRECUENTES (FAQS EN ACORDEÓN COMPLETO) -->
+  <div class="page" id="faqs">
+    <div class="page-header">
+      <div class="container">
+        <h1>Preguntas Frecuentes (FAQ)</h1>
+        <p>Resolvemos tus inquietudes sobre la prestación de nuestros servicios médicos, coberturas y contratación.</p>
+      </div>
+    </div>
+
+    <div class="container section">
+      <div style="margin-bottom: 36px; text-align: center;">
+        <input type="text" id="faqSearchInput" class="form-control" placeholder="🔍 Escribe una palabra clave (ej. ambulancia, SOAT, eventos, tarifas, ciudad)..." style="max-width: 580px; margin: 0 auto; padding: 14px 20px; border-radius: 30px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); font-size: 15px;">
+      </div>
+
+      <div class="faq-accordion-list" id="faqAccordionList">
+        
+        <div class="faq-item">
+          <div class="faq-question">1. ¿Cómo puedo solicitar un traslado en ambulancia o servicio domiciliario de emergencia?</div>
+          <div class="faq-answer">Comunícate a nuestra Central de Control Operativo (CCO) al 300 912 7271 o escribe a nuestro WhatsApp 314 591 4483. Para emergencias inmediatas, la atención telefónica prioritaria está disponible las 24 horas del día, los 7 días de la semana.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">2. ¿Cómo puedo solicitar un traslado en ambulancia o servicio domiciliario programado?</div>
+          <div class="faq-answer">Los traslados programados pueden solicitarse a través de nuestra línea telefónica o WhatsApp. Recomendamos realizar la solicitud con una anticipación mínima de 24 a 36 horas para garantizar disponibilidad y adecuada coordinación logística del servicio.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">3. ¿Cuál es la diferencia entre una ambulancia TAB (Básica) y TAM (Medicalizada)?</div>
+          <div class="faq-answer">La TAB (Transporte Asistencial Básico) está destinada a pacientes clínicamente estables y cuenta con auxiliar de enfermería o tecnólogo en Atención Prehospitalaria. Es ideal para citas médicas, exámenes diagnósticos, terapias y altas hospitalarias.<br><br>La TAM (Transporte Asistencial Medicalizado) incorpora médico a bordo y equipamiento especializado de soporte vital avanzado para pacientes que requieren monitoreo continuo y atención médica durante el traslado.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">4. ¿Qué servicios de atención médica domiciliaria ofrecen?</div>
+          <div class="faq-answer">Brindamos:
+            <ul>
+              <li>Consulta médica domiciliaria.</li>
+              <li>Manejo especializado de heridas.</li>
+              <li>Curaciones simples y complejas.</li>
+              <li>Inyectología.</li>
+              <li>Valoración y seguimiento clínico.</li>
+              <li>Atención básica para pacientes con movilidad reducida y adultos mayores.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">5. ¿Qué métodos de pago aceptan para servicios particulares?</div>
+          <div class="faq-answer">Recibimos pagos mediante:
+            <ul>
+              <li>PSE.</li>
+              <li>Tarjetas débito y crédito.</li>
+              <li>Nequi.</li>
+              <li>Daviplata.</li>
+              <li>Transferencia bancaria.</li>
+            </ul>
+            Además, emitimos facturación electrónica conforme a la normatividad vigente.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">6. ¿Qué soluciones ofrecen para empresas, obras y carreteras?</div>
+          <div class="faq-answer">Ofrecemos:
+            <ul>
+              <li>Ambulancias TAM y TAB en vía.</li>
+              <li>Puestos de enfermería empresariales.</li>
+              <li>Cuadrillas de rescate especializado.</li>
+              <li>Brigadas contra incendios.</li>
+              <li>Cobertura médica para obras y proyectos.</li>
+              <li>Atención para concesiones viales.</li>
+            </ul>
+            Prestamos servicios a sectores de infraestructura, construcción, energía, minería, logística e industria.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">7. ¿Con qué certificaciones y normativas cumplen sus servicios?</div>
+          <div class="faq-answer">Operamos habilitados por el Ministerio de Salud Resolución 3100 de 2019, (REPS) y bajo estándares de calidad sustentados en certificaciones ISO 9001, ISO 14001, ISO 45001 y Registro Único de Contratistas (RUC), garantizando alineación con los requisitos del SG-SST.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">8. ¿Cómo cotizar la cobertura médica para un evento masivo?</div>
+          <div class="faq-answer">Puedes diligenciar el formulario de contacto o comunicarte con nuestro equipo comercial por medio del correo electrónico coordinacion.contratacion@sismedica.co . Evaluamos el aforo, nivel de riesgo, ubicación y requerimientos normativos para presentar una propuesta ajustada a las necesidades del evento.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">9. ¿En qué departamentos del país tienen cobertura operativa?</div>
+          <div class="faq-answer">Contamos con presencia operativa en múltiples departamentos del país y cobertura en importantes corredores viales, proyectos empresariales y centros urbanos estratégicos.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">10. ¿Cómo monitorean y coordinan las ambulancias y servicios en tiempo real?</div>
+          <div class="faq-answer">Nuestra Central de Control Operativo (CCO) monitorea permanentemente los recursos mediante herramientas tecnológicas y sistemas de comunicación que permiten coordinar despachos, seguimientos y atención de emergencias en tiempo real.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">11. ¿Un familiar puede viajar junto al paciente dentro de la ambulancia?</div>
+          <div class="faq-answer">Sí. En ambulancias TAB se permite normalmente un acompañante adulto. En ambulancias TAM, el personal médico evaluará la situación clínica y determinará la viabilidad del acompañamiento.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">12. ¿Con cuánta anticipación debo programar un traslado asistencial no urgente?</div>
+          <div class="faq-answer">Recomendamos solicitar el servicio con una anticipación mínima de 12 a 24 horas para asegurar disponibilidad y correcta planificación logística.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">13. ¿Realizan traslados intermunicipales o entre diferentes ciudades del país?</div>
+          <div class="faq-answer">Sí. Tenemos capacidad operativa para realizar traslados terrestres de corta, media y larga distancia dentro del territorio nacional con seguimiento permanente desde nuestra Central de Control Operativo.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">14. ¿Atienden accidentes de tránsito cubiertos por la póliza SOAT o ARL?</div>
+          <div class="faq-answer">Sí. Prestamos atención, estabilización inicial y traslado asistencial conforme a las coberturas establecidas por el SOAT o la ARL correspondiente.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">15. ¿Qué sucede si la ambulancia requiere abrirse paso en medio de una congestión vehicular?</div>
+          <div class="faq-answer">Nuestras unidades operan bajo protocolos de emergencia y coordinación con autoridades competentes para facilitar un desplazamiento seguro y oportuno hacia el paciente o centro asistencial.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">16. ¿Qué titulación técnica tiene el personal que atiende las ambulancias?</div>
+          <div class="faq-answer">Nuestro personal cumple con los requisitos establecidos por el Ministerio de Salud. Las unidades TAB cuentan con auxiliares de enfermería o tecnólogos en Atención Prehospitalaria, mientras que las unidades TAM incluyen personal médico capacitado para atención avanzada.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">17. ¿Emiten facturación electrónica para contratos empresariales e institucionales?</div>
+          <div class="faq-answer">Sí. Todos los servicios y contratos cuentan con facturación electrónica validada conforme a los requisitos de la DIAN.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">18. ¿Qué documentación entregan para soportar las auditorías del SG-SST?</div>
+          <div class="faq-answer">Entregamos informes operativos, certificaciones, hojas de vida del personal, soportes de mantenimiento, registros de atención y demás documentación requerida para procesos de auditoría y cumplimiento.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">19. ¿Atienden las 24 horas del día?</div>
+          <div class="faq-answer">Sí. Nuestro Centro de Control Operativo (CCO) funciona las 24 horas del día, los 7 días de la semana.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">20. ¿Cuánto cuesta un traslado en ambulancia?</div>
+          <div class="faq-answer">El valor depende de factores como distancia, ubicación del paciente, complejidad clínica, tipo de ambulancia y recursos asistenciales requeridos.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">21. ¿Cuánto tarda una ambulancia en llegar?</div>
+          <div class="faq-answer">Los tiempos de respuesta dependen de la ubicación, condiciones de tráfico y disponibilidad operativa. Nuestro equipo coordina permanentemente los recursos para brindar atención en el menor tiempo posible.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">22. ¿Puedo solicitar una ambulancia para una cita médica o procedimiento programado?</div>
+          <div class="faq-answer">Sí. Prestamos servicios de transporte asistencial para citas médicas, exámenes diagnósticos, procedimientos ambulatorios y altas hospitalarias.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">23. ¿Qué información debo tener al solicitar una ambulancia?</div>
+          <div class="faq-answer">
+            <ul>
+              <li>Nombre del paciente.</li>
+              <li>Edad.</li>
+              <li>Ubicación exacta.</li>
+              <li>Estado de salud.</li>
+              <li>Destino del traslado.</li>
+              <li>Datos de contacto.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">24. ¿Qué tipo de pacientes pueden ser trasladados en una ambulancia TAB?</div>
+          <div class="faq-answer">Pacientes clínicamente estables que requieren acompañamiento asistencial durante el traslado.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">25. ¿Cuándo se requiere una ambulancia medicalizada TAM?</div>
+          <div class="faq-answer">Cuando el paciente necesita monitoreo médico permanente, soporte vital avanzado o atención especializada durante el traslado.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">26. ¿Atienden pacientes adultos mayores en domicilio?</div>
+          <div class="faq-answer">Sí. Ofrecemos atención médica y de enfermería para adultos mayores en su lugar de residencia.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">27. ¿Realizan aplicación de medicamentos e inyectología a domicilio?</div>
+          <div class="faq-answer">Sí. Nuestro personal de enfermería realiza procedimientos autorizados y aplicación de medicamentos formulados.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">28. ¿Realizan manejo y curación de heridas en casa?</div>
+          <div class="faq-answer">Sí. Contamos con personal capacitado para valoración y manejo especializado de heridas.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">29. ¿Cómo puedo contratar un puesto de enfermería para mi empresa?</div>
+          <div class="faq-answer">Nuestro equipo evalúa el nivel de riesgo, cantidad de trabajadores y necesidades operativas para diseñar una solución acorde a cada organización.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">30. ¿Ayudan a las empresas a cumplir los requisitos del SG-SST?</div>
+          <div class="faq-answer">Sí. Nuestros servicios apoyan la preparación para emergencias y gestión integral del riesgo.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">31. ¿Pueden prestar cobertura médica permanente en empresas o proyectos?</div>
+          <div class="faq-answer">Sí. Diseñamos esquemas de cobertura permanente para proyectos industriales, infraestructura, minería, energía y construcción.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">32. ¿Qué tipo de empresas pueden contratar sus servicios?</div>
+          <div class="faq-answer">Empresas de infraestructura, logística, transporte, construcción, energía, minería, industria y entidades públicas y privadas con esas necesidades.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">33. ¿Qué documentación entregan para auditorías y contratistas?</div>
+          <div class="faq-answer">Entregamos certificaciones, soportes técnicos, registros operativos y documentación requerida por clientes y organismos de control.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">34. ¿Qué tipo de eventos requieren cobertura médica?</div>
+          <div class="faq-answer">Eventos deportivos, culturales, corporativos, comunitarios, institucionales y de alta afluencia de público.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">35. ¿Cuántas ambulancias necesita un evento?</div>
+          <div class="faq-answer">Depende del aforo, nivel de riesgo, duración, ubicación y requisitos establecidos por las autoridades competentes.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">36. ¿Con cuánto tiempo debo solicitar cobertura médica para un evento?</div>
+          <div class="faq-answer">Se recomienda solicitar la cotización con la mayor anticipación posible para garantizar disponibilidad y planeación adecuada.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">37. ¿Realizan rescate vehicular en accidentes de tránsito?</div>
+          <div class="faq-answer">Sí. Contamos con personal y equipos especializados para rescate vehicular y atención de incidentes en vía.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">38. ¿Qué servicios de rescate especializado ofrecen?</div>
+          <div class="faq-answer">Ofrecemos rescate vehicular, rescate en espacios confinados y otras operaciones especializadas de emergencia.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">39. ¿Ofrecen cobertura para corredores viales concesionados?</div>
+          <div class="faq-answer">Sí. Prestamos servicios de atención vial, ambulancias, inspección vial operación de la vía y gestión de emergencias para corredores concesionados.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">40. ¿Las ambulancias cuentan con monitoreo y seguimiento en tiempo real?</div>
+          <div class="faq-answer">Sí. Todas las operaciones son coordinadas desde el Centro de Control Operativo mediante sistemas tecnológicos de seguimiento.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">41. ¿Qué protocolos utilizan para la atención de emergencias?</div>
+          <div class="faq-answer">Aplicamos normatividad vigente y procedimientos institucionales orientados a la protección de la vida.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">42. ¿Ofrecen cobertura médica para trabajos de alto riesgo?</div>
+          <div class="faq-answer">Sí. Disponemos de recursos especializados para apoyar operaciones de construcción, minería, energía, industria e infraestructura.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">43. ¿Cuáles son los beneficios de contar con brigadas especializadas de emergencia?</div>
+          <div class="faq-answer">Permiten reducir tiempos de respuesta, fortalecer la atención de incidentes y mejorar los niveles de seguridad operativa.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">44. ¿Cómo apoyan a las empresas en la gestión del riesgo operacional?</div>
+          <div class="faq-answer">Mediante cobertura médica, rescate especializado, preparación para emergencias y acompañamiento técnico.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">45. ¿Qué ventajas tiene contratar una ambulancia medicalizada TAM?</div>
+          <div class="faq-answer">Proporciona soporte vital avanzado, monitoreo continuo y atención médica especializada durante el traslado.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question">46. ¿Cómo garantizan la calidad y seguridad de sus servicios?</div>
+          <div class="faq-answer">Mediante personal calificado, procesos estandarizados, cumplimiento normativo, capacitación continua y seguimiento permanente a la operación.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PIE DE PÁGINA DELGADO CON ÍCONOS SVG VECTORIALES Y TEXTO BLANCO (PÁGINAS INTERNAS) -->
+  <footer id="compact-footer">
+    <div class="cf-container">
+      <div class="cf-left">
+        <strong style="color: #ffffff;">© Sismedica</strong>
+        <span class="cf-divider">|</span>
+        <a href="tel:3009127271" class="cf-contact-link">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.36 1.78.7 2.6a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.48-1.27a2 2 0 0 1 2.11-.45c.82.34 1.7.58 2.6.7A2 2 0 0 1 22 16.92z"/></svg>
+          300 912 7271
+        </a>
+        <span class="cf-divider">|</span>
+        <a href="mailto:sismedica@sismedica.co" class="cf-contact-link">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          sismedica@sismedica.co
+        </a>
+      </div>
+      
+      <div class="cf-center">
+        <a href="#" data-nav="faqs">Preguntas Frecuentes</a>
+        <span class="cf-divider">•</span>
+        <a href="#" id="btnOpenCvModalSmall">Trabaja con Nosotros</a>
+        <span class="cf-divider">•</span>
+        <a href="#" id="btnOpenPrivacyModalSmall">Políticas de Privacidad</a>
+      </div>
+
+      <div class="cf-right">
+        <div class="cf-social">
+          <a href="https://www.facebook.com/sismedica/" target="_blank" aria-label="Facebook"><svg viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.66 8.83 8.44 9.6v-6.79H7.9v-2.81h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.81h-2.34V21.6C18.34 20.83 22 16.84 22 12z"/></svg></a>
+          <a href="https://www.instagram.com/sismedica/" target="_blank" aria-label="Instagram"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+          <a href="https://www.linkedin.com/company/sismedica-sas/" target="_blank" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL TRABAJA CON NOSOTROS / HOJA DE VIDA -->
+  <div class="modal-overlay" id="cvModal">
+    <div class="modal-container" style="max-width: 720px;">
+      <button class="modal-close-btn" id="btnCloseCvModal" aria-label="Cerrar modal">&times;</button>
+      
+      <div style="margin-bottom: 20px;">
+          <!--
+        <h3 style="font-size: 22px; color: var(--primary-blue); font-weight: 800; margin-bottom: 8px;">
+          Tu talento también puede mover vidas.
+        </h3>
+        <p style="font-size: 14px; color: var(--text-dark); margin-bottom: 16px;">
+          En SISMEDICA creemos que detrás de cada servicio hay personas comprometidas con cuidar, responder y hacer la diferencia.
+        </p>-->
+      </div>
+
+      <div class="privacy-content-block" style="font-size: 14px; line-height: 1.6; color: var(--text-dark);">
+        <h4 style="font-size: 16px; color: var(--primary-blue); font-weight: 800; margin-bottom: 8px;">
+          ¿Por qué trabajar con nosotros?
+        </h4>
+        <ul style="list-style-type: disc; padding-left: 20px; margin-bottom: 18px; display: flex; flex-direction: column; gap: 6px;">
+          <li><strong>Propósito:</strong> Nuestro trabajo tiene un impacto real.</li>
+          <li><strong>Personas:</strong> Somos un equipo.</li>
+          <li><strong>Crecimiento:</strong> Aprendemos y desarrollamos nuestro talento.</li>
+          <li><strong>Bienestar:</strong> Cuidamos a quienes hacen posible nuestra misión.</li>
+        </ul>
+
+        <h4 style="font-size: 16px; color: var(--primary-blue); font-weight: 800; margin-bottom: 8px;">
+          ¿Quieres hacer parte de SISMEDICA?
+        </h4>
+        <p style="margin-bottom: 18px;">
+          Déjanos tu hoja de vida y tendremos en cuenta tu perfil para nuestras oportunidades laborales.
+        </p>
+      </div>
+
+      <form id="cvModalForm" style="margin-top: 10px;">
+        <div class="form-group">
+          <label>Carga tu hoja de vida aquí:</label>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 8px; text-transform: none;">
+            Asegúrate de que tu información de contacto y experiencia estén actualizadas.
+          </p>
+          <input type="file" class="form-control" accept=".pdf,.doc,.docx" required style="padding: 10px; background: var(--white);">
+        </div>
+
+        <div style="margin-top: 18px;">
+          <button type="submit" class="btn btn-blue" style="width: 100%; height: 46px;">Enviar Hoja de Vida a Selección</button>
+        </div>
+
+        <div class="alert-success" id="alertModalCvForm" style="margin-top: 16px; line-height: 1.5; text-align: left;">
+          ✓ Nuestro equipo de Selección revisará tu perfil y experiencia de acuerdo con los requisitos de la vacante. Si tu perfil se ajusta, te contactaremos. Nos comunicaremos contigo para avanzar a las siguientes etapas del proceso. Gracias por querer hacer parte de Sismedica.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODALES DE ARTÍCULOS DE SISMEDICA EDUCA -->
+  <!-- MODAL ARTÍCULO 1 -->
+  <div class="modal-overlay" id="articleModal1">
+    <div class="modal-container" style="max-width: 760px;">
+      <button class="modal-close-btn" id="btnCloseArticleModal1" aria-label="Cerrar modal">&times;</button>
+      <div style="position: relative; height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 20px;">
+        <img src="1.jpg" alt="Accidente de tránsito" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" decoding="async">
+        <span class="article-tag" style="position: absolute; top: 14px; left: 14px;">Emergencias</span>
+      </div>
+      <h3 style="font-size: 22px; color: var(--primary-blue); font-weight: 800; margin-bottom: 16px; line-height: 1.3;">
+        ¿Qué hacer (y qué NO hacer) mientras llega la ambulancia en un accidente de tránsito?
+      </h3>
+      <div class="privacy-content-block" style="font-size: 14px; line-height: 1.7; color: var(--text-dark);">
+        <p>Ante un accidente de tránsito en vía, las primeras acciones que realizan los testigos presenciales son determinantes para la supervivencia y recuperación de los afectados. Seguir la conducta <strong>PAS (Proteger, Avisar, Socorrer)</strong> ayuda a salvaguardar la vida mientras arriban las unidades asistenciales.</p>
+
+        <h4>Paso 1: Proteger la escena</h4>
+        <p>Antes de aproximarte a los lesionados, asegúrate de que el lugar esté fuera de peligro para ti y para los demás conductores. Enciende las luces de parqueo de tu vehículo, coloca triángulos o conos reflectivos a una distancia prudente (mínimo 30 metros atrás) y evita encender fósforos o fumar cerca de derrame de combustible.</p>
+
+        <h4>Paso 2: Avisar de inmediato a emergencias</h4>
+        <p>Comunícate de inmediato con nuestra Central de Control Operativo al <strong>300 912 7271</strong> o a la línea nacional 123. Es indispensable proporcionar:</p>
+        <ul>
+          <li>Ubicación exacta o punto de referencia en la carretera/vía.</li>
+          <li>Cantidad aproximada de heridos y estado de consciencia.</li>
+          <li>Tipos de vehículos involucrados (automóviles, camiones, motocicletas).</li>
+        </ul>
+
+        <h4>Paso 3: Socorrer con precaución</h4>
+        <p>Habla con la víctima con voz pausada y serena para transmitirle tranquilidad. Pídele que se mantenga quieta y no intente levantarse.</p>
+
+        <h4>Lo que NUNCA debes hacer:</h4>
+        <ul>
+          <li><strong>NO muevas a los lesionados:</strong> A menos que exista un riesgo vital inminente de fuego o explosión, nunca arrastres ni traslades a la víctima. Movilizar a una persona con posible trauma cervical o lumbar puede ocasionarle secuelas irreversibles como parálisis.</li>
+          <li><strong>NO retires el casco a motociclistas:</strong> La extracción del casco exige técnicas médicas de inmovilización en bloque para no comprometer la médula espinal.</li>
+          <li><strong>NO des de beber ni comer a la persona:</strong> Si requiere intervención quirúrgica urgente, la ingesta de alimentos o líquidos incrementa el riesgo de aspiración pulmonar.</li>
+          <li><strong>NO abandones el lugar:</strong> Acompáñalo hasta la llegada del equipo de atención prehospitalaria de Sismedica o las autoridades correspondientes.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ARTÍCULO 2 -->
+  <div class="modal-overlay" id="articleModal2">
+    <div class="modal-container" style="max-width: 760px;">
+      <button class="modal-close-btn" id="btnCloseArticleModal2" aria-label="Cerrar modal">&times;</button>
+      <div style="position: relative; height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 20px;">
+        <img src="2.jpg" alt="Plan de Manejo de Tráfico PMT" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" decoding="async">
+        <span class="article-tag" style="position: absolute; top: 14px; left: 14px;">Vial</span>
+      </div>
+      <h3 style="font-size: 22px; color: var(--primary-blue); font-weight: 800; margin-bottom: 16px; line-height: 1.3;">
+        Cómo funciona un Plan de Manejo de Tráfico (PMT) en obras y concesiones
+      </h3>
+      <div class="privacy-content-block" style="font-size: 14px; line-height: 1.7; color: var(--text-dark);">
+        <p>El <strong>Plan de Manejo de Tráfico (PMT)</strong> es un instrumento técnico y normativo diseñado para mitigar el impacto generado por obras civiles, mantenimiento vial o emergencias sobre la movilidad y la seguridad de los usuarios del corredor vial.</p>
+
+        <h4>Objetivos principales de un PMT:</h4>
+        <ul>
+          <li>Ofrecer condiciones de tránsito fluidas y seguras tanto para vehículos como para peatones.</li>
+          <li>Proteger la integridad física de las cuadrillas de trabajadores e inspectores viales en la zona de intervención.</li>
+          <li>Minimizar las demoras, congestiones y riesgos de colisión secundaria.</li>
+        </ul>
+
+        <h4>Componentes clave de la señalización en obra:</h4>
+        <p>Un PMT se divide en áreas operativas perfectamente delimitadas mediante dispositivos físicos:</p>
+        <ul>
+          <li><strong>Señalización preventiva e informativa (Fondo Naranja):</strong> Advierten al conductor con anticipación sobre la proximidad de trabajos en la calzada, reducción de carriles o desvíos.</li>
+          <li><strong>Dispositivos de canalización:</strong> Conos, delineadores tubulares, barreras plásticas articuladas (maletines) y cintas delimitadoras que guían la trayectoria vehicular.</li>
+          <li><strong>Personal de control (Paleteros / Controladores de tráfico):</strong> Personal capacitado en el uso de paletas con las leyendas "PARE" y "SIGA", coordinados mediante radiocomunicación en pasos alternados de carril único.</li>
+          <li><strong>Paneles de mensaje variable y luminosos:</strong> Indispensables en horarios nocturnos o tramos con baja visibilidad.</li>
+        </ul>
+
+        <h4>El rol de Sismedica en la operación del corredor:</h4>
+        <p>En el marco de las concesiones viales, Sismedica trabaja de la mano con los equipos de operaciones y seguridad vial desplegando ambulancias TAB/TAM, unidades de rescate y carros taller estratégicamente posicionados para garantizar una respuesta inmediata ante cualquier incidente dentro del PMT.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ARTÍCULO 3 -->
+  <div class="modal-overlay" id="articleModal3">
+    <div class="modal-container" style="max-width: 760px;">
+      <button class="modal-close-btn" id="btnCloseArticleModal3" aria-label="Cerrar modal">&times;</button>
+      <div style="position: relative; height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 20px;">
+        <img src="3.jpg" alt="Preparación ante sismo" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" decoding="async">
+        <span class="article-tag" style="position: absolute; top: 14px; left: 14px;">Prevención</span>
+      </div>
+      <h3 style="font-size: 22px; color: var(--primary-blue); font-weight: 800; margin-bottom: 16px; line-height: 1.3;">
+        ¿Cómo deberías prepararte antes, durante y después de un sismo?
+      </h3>
+      <div class="privacy-content-block" style="font-size: 14px; line-height: 1.7; color: var(--text-dark);">
+        <p>Colombia se encuentra en una zona de alta actividad sísmica. Estar preparados y conocer las acciones preventivas en el hogar, la empresa o centros educativos marca la diferencia en situaciones de emergencia.</p>
+
+        <h4>1. ANTES: Preparación y prevención</h4>
+        <ul>
+          <li><strong>Identifica estructuras seguras:</strong> Ubica columnas, vigas y dinteles fuertes. Inspecciona las áreas libres de objetos colgantes pesados.</li>
+          <li><strong>Prepara la Mochila o Kit de Emergencia:</strong> Incluye agua embotellada, alimentos no perecederos, botiquín de primeros auxilios, linterna, silbato, radio portátil a pilas y copia de documentos.</li>
+          <li><strong>Fija mobiliario pesado:</strong> Asegura armarios, bibliotecas, televisores y calentadores a los muros para evitar su caída.</li>
+          <li><strong>Define el plan familiar o empresarial:</strong> Acuerda puntos de encuentro y rutas de evacuación señalizadas.</li>
+        </ul>
+
+        <h4>2. DURANTE: Actuación consciente</h4>
+        <ul>
+          <li><strong>Conserva la calma:</strong> Evita correr de forma desordenada o gritar. El pánico genera estampidas e incrementa el riesgo de accidentes.</li>
+          <li><strong>Agáchate, Cúbrete y Sujétate:</strong> Protégete debajo de una mesa o escritorio resistente. Si no hay muebles cercanos, cúbrete la cabeza con los brazos cerca de una columna.</li>
+          <li><strong>Aléjate del peligro:</strong> Mantente distante de ventanas de vidrio, espejos, fachadas o estanterías.</li>
+          <li><strong>Si estás al aire libre:</strong> Dirígete hacia un espacio abierto despejado de cables de alta tensión, árboles y edificios altos.</li>
+        </ul>
+
+        <h4>3. DESPUÉS: Evacuación y verificación</h4>
+        <ul>
+          <li><strong>Evacúa por las escaleras:</strong> NUNCA utilices ascensores durante o inmediatamente después de un temblor.</li>
+          <li><strong>Verifica fugas de gas o daños eléctricos:</strong> Cierra las llaves de paso de gas y de suministro eléctrico.</li>
+          <li><strong>Atiende a las personas afectadas:</strong> Si identificas lesionados de consideración, solicita auxilio médico a la línea <strong>300 912 7271</strong>. No intentes mover a personas con probables fracturas severas salvo peligro de derrumbe.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ARTÍCULO 4 -->
+  <div class="modal-overlay" id="articleModal4">
+    <div class="modal-container" style="max-width: 760px;">
+      <button class="modal-close-btn" id="btnCloseArticleModal4" aria-label="Cerrar modal">&times;</button>
+      <div style="position: relative; height: 220px; border-radius: 12px; overflow: hidden; margin-bottom: 20px;">
+        <img src="4.jpg" alt="Señales de tránsito en la carretera" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy" decoding="async">
+        <span class="article-tag" style="position: absolute; top: 14px; left: 14px;">Seguridad</span>
+      </div>
+      <h3 style="font-size: 22px; color: var(--primary-blue); font-weight: 800; margin-bottom: 16px; line-height: 1.3;">
+        ¿Conocías estas señales de tránsito en la carretera y qué indica cada una?
+      </h3>
+      <div class="privacy-content-block" style="font-size: 14px; line-height: 1.7; color: var(--text-dark);">
+        <p>Las señales viales constituyen el lenguaje universal en las carreteras. Conocer su forma, color y significado es fundamental para prevenir colisiones y proteger vidas en todo momento.</p>
+
+        <h4>1. Señales Preventivas (Fondo Amarillo - Forma de Rombo)</h4>
+        <p>Tienen la función de advertir con anticipación sobre riesgos o cambios inesperados en las condiciones geométricas y operativas de la vía.</p>
+        <ul>
+          <li><strong>Curva peligrosa o pronunciada:</strong> Exige reducir la velocidad antes de ingresar al viraje.</li>
+          <li><strong>Zona de derrumbes o terreno resbaladizo:</strong> Advierte sobre pérdida de adherencia en el asfalto.</li>
+          <li><strong>Paso peatonal o escolar:</strong> Requiere máxima precaución y cesión del paso a transeúntes.</li>
+        </ul>
+
+        <h4>2. Señales Reglamentarias (Fondo Blanco, Borde Rojo y Símbolo Negro)</h4>
+        <p>Indican prohibiciones, restricciones o mandatos de obligatorio cumplimiento de acuerdo con el Código Nacional de Tránsito.</p>
+
+        <ul>
+          <li><strong>PARE (Octágono Rojo):</strong> Detención total del vehículo para verificar el paso antes de continuar.</li>
+          <li><strong>Límite de velocidad máxima:</strong> Indica el tope máximo permitido según el tramo vial (ej. 30, 60 o 80 km/h).</li>
+          <li><strong>Prohibido adelantar:</strong> Presente en curvas, lomas o líneas dobles continuas donde la visibilidad es nula.</li>
+        </ul>
+
+        <h4>3. Señales Informativas (Fondo Azul o Verde)</h4>
+        <p>Guían al conductor proporcionando datos sobre destinos, distancias, estaciones de servicio y puestos de primeros auxilios.</p>
+
+        <ul>
+          <li><strong>Puesto de Primeros Auxilios / Hospital:</strong> Señala la presencia cercana de centros asistenciales o ambulancias de urgencia.</li>
+          <li><strong>Teléfono de emergencia S.O.S.:</strong> Indica puntos de llamadas gratuitas para asistencia en concesiones viales.</li>
+        </ul>
+
+        <h4>Consejo de Seguridad Vial Sismedica:</h4>
+        <p>Mantener la distancia de seguridad entre vehículos, respetar la señalización horizontal y acatar las indicaciones de la patrulla vial contribuye a una movilidad segura para todos los colombianos.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- VENTANA EMERGENTE: MODAL POLÍTICAS DE PRIVACIDAD COMPLETO (18 NUMERALES APROBADOS) -->
+  <div class="modal-overlay" id="privacyModal">
+    <div class="modal-container" style="max-width: 820px;">
+      <button class="modal-close-btn" id="btnClosePrivacyModal" aria-label="Cerrar modal">&times;</button>
+      
+      <div style="margin-bottom: 20px;">
+        <h3 style="font-size: 22px; color: var(--primary-blue); font-weight: 800; margin-bottom: 6px;">
+          POLÍTICA DE TRATAMIENTO DE DATOS PERSONALES Y PRIVACIDAD
+        </h3>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          SISMEDICA S.A.S. — Cumplimiento Ley 1581 de 2012 y Decreto 1377 de 2013
+        </p>
+      </div>
+
+      <div class="privacy-content-block">
+        <h4>1. DEFINICIONES LEGALES</h4>
+        <p>Para la interpretación de la presente política, de conformidad con la Ley 1581 de 2012 y el Decreto 1377 de 2013, se entenderá por:</p>
+
+        <ul>
+          <li><strong>Autorización:</strong> Consentimiento previo, expreso e informado del titular para llevar a cabo el tratamiento de sus datos personales.</li>
+          <li><strong>Base de Datos:</strong> Conjunto organizado de datos personales que sea objeto de tratamiento.</li>
+          <li><strong>Dato Personal:</strong> Cualquier información vinculada o que pueda asociarse a una o varias personas naturales determinadas o determinables.</li>
+          <li><strong>Dato Sensible:</strong> Aquel que afecta la intimidad del Titular o cuyo uso indebido puede dar lugar a su discriminación, tales como aquellos que revelen el origen racial o étnico, la orientación política, las convicciones religiosas o filosóficas, la pertenencia a sindicatos, organizaciones sociales o de derechos humanos, así como los datos relativos a la salud, la vida sexual y los datos biométricos.</li>
+          <li><strong>Encargado del Tratamiento:</strong> Persona natural o jurídica que realiza el tratamiento de datos por cuenta del responsable.</li>
+          <li><strong>Responsable del Tratamiento:</strong> SISMEDICA S.A.S., persona jurídica que decide sobre la base de datos y/o el tratamiento.</li>
+          <li><strong>Titular:</strong> Persona natural cuyos datos personales sean objeto de Tratamiento por parte de SISMEDICA S.A.S., incluyendo, entre otros, pacientes, usuarios del sitio web, colaboradores, proveedores, candidatos a procesos de selección y personas naturales vinculadas a clientes corporativos.</li>
+        </ul>
+
+        <h4>2. IDENTIFICACIÓN DEL RESPONSABLE DEL TRATAMIENTO</h4>
+        <p>
+          <strong>Razón Social:</strong> SISMEDICA S.A.S.<br>
+          <strong>NIT:</strong> 830015870-8<br>
+          <strong>Sede Principal:</strong> Calle 130A No. 58A-20, Bogotá D.C., Colombia.<br>
+          <strong>Teléfono de Atención:</strong> (+57) 300 912 7271<br>
+          <strong>Correo Electrónico Oficial:</strong> sismedica@sismedica.co
+        </p>
+
+        <h4>3. PRINCIPIOS RECTORES DEL TRATAMIENTO</h4>
+        <p>SISMEDICA S.A.S. dará aplicación a los principios de legalidad, finalidad, libertad, veracidad o calidad, transparencia, acceso y circulación restringida, seguridad y confidencialidad establecidos en el artículo 4 de la Ley 1581 de 2012.</p>
+
+        <h4>4. MAPEO Y RECOLECCIÓN DE DATOS POR MÓDULOS Y CANALES</h4>
+        <p>Los datos personales son recolectados a través de la interacción directa de los titulares con las distintas secciones de la plataforma web y nuestros canales oficiales de contacto:</p>
+        <ul>
+          <li><strong>Cotizador y Formularios Web:</strong> Nombre/Empresa, teléfono celular, correo electrónico, servicio requerido, departamento y sector industrial. (Datos de contacto e información relacionada con la solicitud procesada hacia coordinacion.contratacion@sismedica.co).</li>
+          <li><strong>Canales Directos (Correo Electrónico):</strong> Al interactuar mediante los canales oficiales de correo electrónico de SISMEDICA S.A.S., podrán ser recolectados datos de identificación y contacto, así como la información y los documentos que el Titular suministre voluntariamente a través de estos canales.</li>
+          <li><strong>Pasarela de Pagos ("Carrito de compras"):</strong> Para la gestión de pagos podrán ser tratados datos de identificación, información de facturación y datos relacionados con la transacción.</li>
+          <li><strong>Portal "Soy Sismedica" (Colaboradores):</strong> Datos de identificación y autenticación, información laboral, solicitudes de vacaciones, desprendibles de nómina.</li>
+        </ul>
+
+        <h4>5. TRATAMIENTO ESPECIAL DE DATOS SENSIBLES (SALUD) Y DE MENORES</h4>
+        <p><strong>Datos de Salud:</strong> SISMEDICA S.A.S. practicalizada podrá recolectar y tratar datos relativos a la salud, incluyendo información sobre el estado de salud, diagnósticos, requerimientos de traslado asistencial (TAB/TAM) y/o cuidados domiciliarios, cuando ello resulte necesario para las finalidades informadas y de conformidad con las condiciones establecidas en la normativa aplicable.</p>
+        <p><strong>Niños, Niñas y Adolescentes:</strong> El tratamiento de datos personales de niños, niñas y adolescentes se realizará únicamente cuando resulte necesario para el cumplimiento de las finalidades informadas y de conformidad con la normativa aplicable.</p>
+
+        <h4>6. FINALIDADES DETALLADAS DEL TRATAMIENTO</h4>
+        <p>SISMEDICA S.A.S practicalizada tratará los datos personales para:</p>
+        <ul>
+          <li><strong>Operatividad Médica:</strong> Gestionar y coordinar la prestación de servicios de atención médica y prehospitalaria, incluyendo el despacho de ambulancias, la coordinación con el Centro de Control Operativo (CCO 24/7).</li>
+          <li><strong>Gestión de Pagos y Facturación:</strong> Gestionar y verificar las transacciones relacionadas con los servicios prestados, realizar la facturación electrónica.</li>
+          <li><strong>Relación Corporativa:</strong> Gestionar y ejecutar las relaciones comerciales y contractuales con empresas, concesiones viales, obras y demás clientes corporativos.</li>
+          <li><strong>Selección y Gestión Humana:</strong> Gestionar los procesos de selección, vinculación y administración del personal.</li>
+          <li><strong>Atención de Solicitudes:</strong> Recibir, gestionar, tramitar y responder las solicitudes a través de sismedica@sismedica.co.</li>
+        </ul>
+
+        <h4>7. TRANSMISIÓN Y TRANSFERENCIA INTERNACIONAL DE DATOS</h4>
+        <p>SISMEDICA S.A.S practicalizada podrá realizar la transmisión o transferencia de datos personales a terceros, nacionales o internacionales, cuando ello resulte necesario para el cumplimiento de las finalidades informadas.</p>
+
+        <h4>8. DERECHOS DEL TITULAR Y EXCEPCIÓN POR NORMATIVA DE SALUD</h4>
+        <p>El Titular de los datos personales tiene derecho a conocer, actualizar y rectificar sus datos personales; solicitar prueba de la autorización otorgada, cuando esta sea requerida.</p>
+        <p><strong>Limitación al derecho de supresión - Historia Clínica:</strong> De conformidad con la Resolución 839 de 2017 del Ministerio de Salud y Protección Social, la historia clínica deberá conservarse por un período mínimo de quince (15) años.</p>
+
+        <h4>9. PROCEDIMIENTO PARA EL EJERCICIO DEL HABEAS DATA</h4>
+        <p>Los Titulares podrán ejercer sus derechos mediante comunicación dirigida a SISMEDICA S.A.S. a través del correo electrónico <strong>sismedica@sismedica.co</strong>.</p>
+
+        <h4>10. DEBERES DE SISMEDICA S.A.S. COMO RESPONSABLE</h4>
+        <p>SISMEDICA S.A.S. se compromete a garantizar al Titular el pleno ejercicio de sus derechos, conservar la información bajo condiciones de seguridad y tramitar las consultas dentro de los términos legales.</p>
+
+        <h4>11. SEGURIDAD DE LA INFORMACIÓN</h4>
+        <p>SISMEDICA S.A.S. adoptará las medidas técnicas, humanas, administrativas y de seguridad que resulten razonables para proteger los datos personales.</p>
+
+        <h4>12. USO DE COOKIES Y TECNOLOGÍAS DE RASTREO</h4>
+        <p>La plataforma web utiliza cookies y herramientas interactivas como Leaflet/OpenStreetMap y Google Fonts para el óptimo funcionamiento del sitio web.</p>
+
+        <h4>13. VIGENCIA DE LA POLÍTICA Y DE LAS BASES DE DATOS</h4>
+        <p>Esta política rige a partir de su publicación y permanecerá vigente mientras subsista la relación contractual o legal.</p>
+
+        <h4>14. AUTORIZACIÓN PARA EL TRATAMIENTO DE DATOS PERSONALES</h4>
+        <p>SISMEDICA S.A.S. solicitará la autorización previa, expresa e informada del Titular para el tratamiento de sus datos personales.</p>
+
+        <h4>15. TRATAMIENTO DE DATOS POR ENCARGADOS</h4>
+        <p>Los terceros Encargados del Tratamiento únicamente tratarán los datos según las instrucciones de SISMEDICA S.A.S.</p>
+
+        <h4>16. ACTUALIZACIÓN Y MODIFICACIÓN DE LA POLÍTICA</h4>
+        <p>Cualquier modificación sustancial será informada a través del sitio web oficial.</p>
+
+        <h4>17. RESPONSABLE DE LA ATENCIÓN DE CONSULTAS Y RECLAMOS</h4>
+        <p>El área de Atención al Cliente (sismedica@sismedica.co) responderá las consultas y reclamos de Habeas Data.</p>
+
+        <h4>18. DATOS DE CONTACTO</h4>
+        <p>Para el ejercicio de derechos o consultas:</p>
+        <ul>
+          <li><strong>Atención al Cliente:</strong> sismedica@sismedica.co</li>
+          <li><strong>Cotizaciones y Contratación:</strong> coordinacion.contratacion@sismedica.co</li>
+          <li><strong>Dirección:</strong> Calle 130A No. 58A-20, Bogotá D.C., Colombia.</li>
+          <li><strong>Teléfono PBX:</strong> (+57) 300 912 7271</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Script JS de Leaflet Map -->
+ 
+
+  <!-- JAVASCRIPT NATIVO DE NAVEGACIÓN Y COMPONENTES -->
+  <script>
+  </script>
+</body>
+</html>
